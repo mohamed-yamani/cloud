@@ -76,3 +76,6 @@ Vagrant.configure("2") do |config|
         worker.vm.provision "shell", inline: MASTER_SCRIPT
     end
 end
+
+
+### python3 -m pip install ansible ###
