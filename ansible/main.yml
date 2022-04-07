@@ -1,0 +1,29 @@
+
+- name: Install & Configure Apache
+  hosts: localhost  # or all  # or specific host  # or specific group # or specific tag # or specific role # or specific inventory file # or specific inventory file section
+  become: true
+  user: root
+
+  pre_tasks:
+    - name: Update APT Cache
+      apt: update_cache=true cache_valid_time=3600
+
+  handlers:
+    - name: Restart apache
+      service: name=apache2 state=restarted
+  
+  tasks:
+    - name: Install Apache
+      apt: name=apache2 state=present update_cache=true
+
+    - name: Configure Apache
+      template: src=apache2.conf dest=/etc/apache2/apache2.conf owner=root group=root mode=0644
+      notify: Restart apache
+      
+
+  # command: sudo apt-get install apache2
+  # when: sudo apt-get install apache2
+  # ansible-playbook -i inventory main.yml
+  # ansible-galaxy install -r requirements.yml
+  # ansible-glaxy init nginx
+  # ansible-galaxy init base
