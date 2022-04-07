@@ -25,9 +25,9 @@ Vagrant.configure("2") do |config|
     app.vm.network "private_network", ip: "192.168.60.5"
   end
 
-  # App server 3
-  config.vm.define "app3" do |app|
-    app.vm.hostname = "orc-app3.test"
-    app.vm.network "private_network", ip: "192.168.60.6"
+  # Database server
+  config.vm.define "db" do |db|
+    db.vm.hostname = "orc-db.test"
+    db.vm.network "private_network", ip: "192.168.60.6"
   end
 end
