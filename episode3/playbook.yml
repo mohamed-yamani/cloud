@@ -1,0 +1,66 @@
+---
+- name: Install Apache
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install Apache
+      command: apt-get install apache2 -y
+    # - name: Install Apache
+    #   apt:
+    #     name:
+    #       - httpd
+    #       - httpd-devel
+    #     state: present
+      # shell: |
+      #   apt-get install -quiet -y httpd httpd-devel
+      #   cp httpd.conf /etc/httpd/conf/httpd.conf
+      #   cp httpd-vhosts.conf /etc/httpd/conf/httpd-vhosts.conf
+    - name: Copy configuration files.
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: 0645
+      with_items:
+        - src: httpd.conf
+          dest: /etc/apache2/test1.conf
+        - src: httpd-vhosts.conf
+          dest: /etc/apache2/test2.conf
+
+    - name: Make sure the Apache service is running.
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Start Apache and configure it to start at boot.
+      command: service apache2 start
+      
+
+        
+
+
+# ---
+# - hosts: all
+#   become: yes
+#   tasks:
+#     - name: Ensure NTP is installed ubuntu
+#       apt: name=ntp state=present
+#     - name: Ensure nfs service is running
+#       service:
+#         name: ntpd
+#         state: started
+#         enabled: yes
+#       # with_items:
+#       #   - rpcbind
+#       #   - nfs-server
+#       #   - nfs-lock
+#       #   - nfs-idmap
+#       when: inventory_hostname == "storage"
+#     - name: echo test
+#       shell: echo "test"
+#     - name: create directory
+#       shell: mkdir -p /justatestfromansible
+  ### ntp is a service that is installed by default on ubuntu ###
