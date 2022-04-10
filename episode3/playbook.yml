@@ -7,6 +7,9 @@
       apache_package: apache2
       apache_service: apache2
       apache_conf_dir: /etc/apache2/sites-enabled
+    
+    vars_files:
+      - vars/api_key.yml
 
     handlers:
       - name: restart apache
@@ -15,21 +18,30 @@
         debug: msg="{{ apache_package }}"
 
     tasks:
-      - name: Ensure Apache is installed.
-        apt: 
-          name: "{{ apache_package }}"
-          state: present
-        notify: just a test
+      - name: Echo the API key which was injected into the env.
+        shell: echo $API_KEY
+        environment:
+          API_KEY: "{{ myapp_api_key }}"
+        register: echo_result
       
-      - name: Copy the Apache config file.
-        copy:
-          src: test
-          dest: "{{ apache_conf_dir }}/test.conf"
-        notify: restart apache
+      - name: Show the result of the echo.
+        debug: var=echo_result.stdout
 
-      - name: Ensure Apache is running and starts at boot.
-        service:
-          name: "{{ apache_service }}"
-          state: started
-          enabled: yes
-          
+      # - name: Ensure Apache is installed.
+      #   apt: 
+      #     name: "{{ apache_package }}"
+      #     state: present
+      #   notify: just a test
+      
+      # - name: Copy the Apache config file.
+      #   copy:
+      #     src: test
+      #     dest: "{{ apache_conf_dir }}/test.conf"
+      #   notify: restart apache
+
+      # - name: Ensure Apache is running and starts at boot.
+      #   service:
+      #     name: "{{ apache_service }}"
+      #     state: started
+      #     enabled: yes
+      #   notify: just a test
