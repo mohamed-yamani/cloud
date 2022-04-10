@@ -1,66 +1,35 @@
 ---
-- name: Install Apache
-  hosts: all
-  become: true
+  - name: Install Apache.
+    hosts: all
+    become: true
 
-  tasks:
-    - name: Install Apache
-      command: apt-get install apache2 -y
-    # - name: Install Apache
-    #   apt:
-    #     name:
-    #       - httpd
-    #       - httpd-devel
-    #     state: present
-      # shell: |
-      #   apt-get install -quiet -y httpd httpd-devel
-      #   cp httpd.conf /etc/httpd/conf/httpd.conf
-      #   cp httpd-vhosts.conf /etc/httpd/conf/httpd-vhosts.conf
-    - name: Copy configuration files.
-      copy:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        owner: root
-        group: root
-        mode: 0645
-      with_items:
-        - src: httpd.conf
-          dest: /etc/apache2/test1.conf
-        - src: httpd-vhosts.conf
-          dest: /etc/apache2/test2.conf
+    vars:
+      apache_package: apache2
+      apache_service: apache2
+      apache_conf_dir: /etc/apache2/sites-enabled
 
-    - name: Make sure the Apache service is running.
-      service:
-        name: apache2
-        state: started
-        enabled: yes
+    handlers:
+      - name: restart apache
+        service: name="{{ apache_service }}" state=restarted
+      - name: just a test
+        debug: msg="{{ apache_package }}"
 
-    - name: Start Apache and configure it to start at boot.
-      command: service apache2 start
+    tasks:
+      - name: Ensure Apache is installed.
+        apt: 
+          name: "{{ apache_package }}"
+          state: present
+        notify: just a test
       
+      - name: Copy the Apache config file.
+        copy:
+          src: test
+          dest: "{{ apache_conf_dir }}/test.conf"
+        notify: restart apache
 
-        
-
-
-# ---
-# - hosts: all
-#   become: yes
-#   tasks:
-#     - name: Ensure NTP is installed ubuntu
-#       apt: name=ntp state=present
-#     - name: Ensure nfs service is running
-#       service:
-#         name: ntpd
-#         state: started
-#         enabled: yes
-#       # with_items:
-#       #   - rpcbind
-#       #   - nfs-server
-#       #   - nfs-lock
-#       #   - nfs-idmap
-#       when: inventory_hostname == "storage"
-#     - name: echo test
-#       shell: echo "test"
-#     - name: create directory
-#       shell: mkdir -p /justatestfromansible
-  ### ntp is a service that is installed by default on ubuntu ###
+      - name: Ensure Apache is running and starts at boot.
+        service:
+          name: "{{ apache_service }}"
+          state: started
+          enabled: yes
+          
