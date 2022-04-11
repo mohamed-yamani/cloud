@@ -1,0 +1,44 @@
+---
+- name: Install docker
+  hosts: db
+  become: true
+  
+  tasks:
+    - name: Install Apache
+      shell: |
+        apt-get update
+        echo "update ok"
+        apt-get upgrade -y
+        echo "upgrade ok"
+        apt-get install curl apache2 apache2-utils -y
+        echo "curl ok"
+    # - name: Install Apache
+    #   apt:
+    #     name:
+    #       - httpd
+    #       - httpd-devel
+    #     state: present
+      # shell: |
+      #   apt-get install -quiet -y httpd httpd-devel
+    
+    # - name: Copy configuration files.
+    #   copy:
+    #     src: "{{ item.src }}"
+    #     dest: "{{ item.dest }}"
+    #     owner: root
+    #     group: root
+    #     mode: 0645
+    #   with_items:
+    #     - src: httpd.conf
+    #       dest: /etc/apache2/test1.conf
+    #     - src: httpd-vhosts.conf
+    #       dest: /etc/apache2/test2.conf
+
+    # - name: Make sure the Apache service is running.
+    #   service:
+    #     name: apache2
+    #     state: started
+    #     enabled: yes
+
+    # - name: Start Apache and configure it to start at boot.
+    #   command: service apache2 start

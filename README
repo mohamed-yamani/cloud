@@ -2,10 +2,12 @@
 
 ### ansible-galaxy is a tool to manage Ansible Galaxy roles ###
 ansible-galaxy install -r requirements.yml
+
 ### ansible-doc is a tool to generate documentation for Ansible modules ###
 ansible multi -i inventory -a hostname --fork 1
 ansible -i inventory db -m setup
 ansible -i inventory db -m ping
+
 ### ping the db ###
 ansible -i inventory db -m shell -a "ls -l /var/log/mysql"
 ansible -i inventory multi -b -m apt -a "name=ntp state=present"
@@ -26,3 +28,8 @@ ansible-playbook -i inventory playbook.yml --limit db --tags "db"
 
 ### ansible-inventory ###
 ansible-inventory --list -i inventory
+
+### ansible vault ###
+ansible-vault encrypt vars/api_key.yml
+ansible-playbook -i inventory playbook.yml -f 1 --ask-vault-pass
+ansible-vault decrypt vars/api_key.yml
