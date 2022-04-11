@@ -1,35 +1,29 @@
 ---
-  - name: Install Apache.
+  - name: cloud-1.
     hosts: all
     become: true
 
 
 
     tasks:
-      - name: Install Docker.
-        shell : |
-          apt-get update
-          apt-get install -y -q net-tools curl vim ansible  -t buster-backports
-          curl -fsSL https://get.docker.com/ -o get-docker.sh
-          sh get-docker.sh
-          systemctl start docker
-          systemctl enable docker
-          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          chmod +x /usr/local/bin/docker-compose
-          docker ps && echo "[INFO] Docker installed successful" || echo"[INFO] Error installing Docker"
-          rm -rf get-docker.sh
-        
-      
-      # usermod -aG docker vagrant
-      
-      # - name: deploy nginx docker container
-      #   docker_container:
-      #     image: nginx:stable
-      #     name: nginx
-      #     state: started
-      #     auto_remove: true
-      #     ports:
-      #       - "8080:80"
+      - import_tasks: docker_install/tasks/main.yml
+      - name: Create a network
+        docker_network:
+          name: cloud-network
+      - name: create nginx container
+        docker_container:
+          name: nginx
+          image: nginx
+          state: started
+          # volumes:
+          #   - ./nginx:/usr/share/nginx/html
+          ports: 
+            - 80:80
+            - 443:443
+          expose:
+            - 80
+            - 443
+          # network: cloud-1
 
     
       
