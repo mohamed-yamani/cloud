@@ -1,0 +1,63 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+MASTER_SCRIPT = <<-SHELL
+
+    apt-get update
+    apt-get install -y -q net-tools curl vim ansible  -t buster-backports
+    curl -fsSL https://get.docker.com/ -o get-docker.sh
+    sh get-docker.sh
+    systemctl start docker
+    systemctl enable docker
+    curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    docker ps && echo "[INFO] Docker installed successful" || echo"[INFO] Error installing Docker"
+    rm -rf get-docker.sh
+    usermod -aG docker vagrant
+    
+    ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
+    # curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
+    # python get-pip.py --user
+    # ssh-copy-id WORKER_IP    
+    export HOME=/vagrant
+SHELL
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+
+  config.ssh.insert_key = false
+  
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # # App server 1
+  config.vm.define "app1" do |control|
+    control.vm.hostname = "orc-app1.test"
+    control.vm.network "private_network", ip: "192.168.60.4"
+    control.vm.provider "virtualbox" do |vb|
+      vb.name = "orc-app1.test"
+    end
+  end
+
+  # # App server 2
+  config.vm.define "app2" do |control|
+    control.vm.hostname = "orc-app2.test"
+    control.vm.network "private_network", ip: "192.168.60.5"
+    control.vm.provider "virtualbox" do |vb|
+      vb.name = "orc-app2.test"
+    end
+  end
+
+  # # Database server
+  config.vm.define "db" do |control|
+    control.vm.hostname = "orc-db.test"
+    control.vm.network "private_network", ip: "192.168.60.6"
+    control.vm.provider "virtualbox" do |vb|
+      vb.name = "orc-db.test"
+    end
+  end
+end

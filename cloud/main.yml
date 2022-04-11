@@ -1,0 +1,54 @@
+---
+  - name: Install Apache.
+    hosts: all
+    become: true
+
+
+
+    tasks:
+      - name: Install Docker.
+        shell : |
+          apt-get update
+          apt-get install -y -q net-tools curl vim ansible  -t buster-backports
+          curl -fsSL https://get.docker.com/ -o get-docker.sh
+          sh get-docker.sh
+          systemctl start docker
+          systemctl enable docker
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          docker ps && echo "[INFO] Docker installed successful" || echo"[INFO] Error installing Docker"
+          rm -rf get-docker.sh
+        
+      
+      # usermod -aG docker vagrant
+      
+      # - name: deploy nginx docker container
+      #   docker_container:
+      #     image: nginx:stable
+      #     name: nginx
+      #     state: started
+      #     auto_remove: true
+      #     ports:
+      #       - "8080:80"
+
+    
+      
+      # - name: Show the result of the echo.
+      #   debug: var=echo_result.stdout
+
+      # - name: Ensure Apache is installed.
+      #   apt: 
+      #     name: "{{ apache_package }}"
+      #     state: present
+      
+      # - name: Copy the Apache config file.
+      #   copy:
+      #     src: test
+      #     dest: "{{ apache_conf_dir }}/test.conf"
+      #   notify: restart apache
+
+      # - name: Ensure Apache is running and starts at boot.
+      #   service:
+      #     name: "{{ apache_service }}"
+      #     state: started
+      #     enabled: yes
