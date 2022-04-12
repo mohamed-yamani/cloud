@@ -2,9 +2,6 @@
   - name: cloud-1.
     hosts: all
     become: true
-
-
-
     tasks:
       - import_tasks: docker_install/tasks/main.yml
       - name: Create a network
@@ -24,6 +21,11 @@
             - 80
             - 443
           # network: cloud-1
+      - name: copy nginx config
+        copy:
+          src: ./ansible.cfg
+          dest: /
+          # owner: root:root
 
     
       
