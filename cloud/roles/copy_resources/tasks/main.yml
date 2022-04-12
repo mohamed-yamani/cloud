@@ -1,0 +1,35 @@
+---
+- name: creat nginx directory
+  command: mkdir -p nginx/conf
+
+- name: copy nginx config
+  copy:
+    src: ./resources/nginx/conf/nginx.conf
+    dest: ./nginx/conf
+
+- name: copy dockerfile
+  copy:
+    src: ./resources/nginx/Dockerfile
+    dest: ./nginx
+
+- name: copy file.php
+  copy:
+    src: ./resources/nginx/file.php
+    dest: ./nginx/file.php
+
+- name: build nginx image
+  shell: |
+    while [ ! -f ./nginx/Dockerfile ]; do sleep 1; done && 
+      docker build -t nginx ./nginx
+
+- name: docker run nginx
+  docker_container:
+    name: nginx
+    image: nginx
+    state: started
+    ports: 
+      - 80:80
+      - 443:443
+    expose:
+      - 80
+      - 443

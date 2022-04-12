@@ -5,10 +5,11 @@
 
     roles:
       - docker_install
-      - generate_ssl
+      # - generate_ssl
       - docker_network
-      - docker_nginx
-      - nginx_conf
+      - copy_resources
+     
+      # - docker_nginx
 
 
       # - name: copy nginx config
