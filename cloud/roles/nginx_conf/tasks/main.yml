@@ -1,0 +1,13 @@
+---
+- name: copy nginx config
+  copy:
+    src: ./ansible.cfg
+    dest: /
+
+# - name: copy nginx certs and config to container
+#   shell: |
+#     docker exec nginx rm -rf nginx:/etc/nginx/nginx.conf
+#     docker cp /nginx.conf  nginx:/etc/nginx/nginx.conf
+#     docker cp /etc/ssl/private/nginx-selfsigned.key nginx:/etc/ssl/private/nginx-selfsigned.key
+#     docker cp /etc/ssl/certs/nginx-selfsigned.crt nginx:/etc/ssl/certs/nginx-selfsigned.crt
+        

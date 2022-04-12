@@ -1,0 +1,50 @@
+---
+- name: create nginx container
+  community.docker.docker_container:
+    name: nginx
+    image: nginx
+    state: started
+    
+    # volumes:
+    #   - ./nginx:/usr/share/nginx/html
+    # copy:
+    #   - src: /ansible.cfg
+    #     dest: /
+    # create ssl cert and key
+    run: |
+      openssl req -x509 -nodes -days 365 \
+        -subj "/C=KH/ST=KH/O=Company, Inc./CN=myamani.42.fr" \
+        -addext "subjectAltName=DNS:myamani.42.fr" \
+        -newkey rsa:2048 \
+        -keyout /etc/ssl/private/nginx-selfsigned.key \
+        -out /etc/ssl/certs/nginx-selfsigned.crt;
+    copy:
+      - src: /nginx.conf
+        dest: /etc/nginx/nginx.conf
+      - src: /etc/ssl/private/nginx-selfsigned.key
+        dest: /etc/ssl/private/nginx-selfsigned.key
+      - src: /etc/ssl/certs/nginx-selfsigned.crt
+        dest: /etc/ssl/certs/nginx-selfsigned.crt
+    ports: 
+      - 80:80
+      - 443:443
+    expose:
+      - 80
+      - 443
+    restart: always
+
+  # community.docker.docker_container_exec:
+  #   container: nginx
+  #   command: openssl req -x509 -nodes -days 365 \
+  #     -subj "/C=KH/ST=KH/O=Company, Inc./CN=myamani.42.fr" \
+  #     -addext "subjectAltName=DNS:myamani.42.fr" \
+  #     -newkey rsa:2048 \
+  #     -keyout /etc/ssl/private/nginx-selfsigned.key \
+  #     -out /etc/ssl/certs/nginx-selfsigned.crt;
+
+- name: Print stdout
+  debug:
+    var: result.stdout
+    
+    
+    # network: cloud-1

@@ -8,6 +8,7 @@
     name:
       - curl
       - python3-pip
+      - openssl
     state: present
 
 - name: install docker sdk for python
