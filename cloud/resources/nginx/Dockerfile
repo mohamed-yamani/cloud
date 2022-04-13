@@ -2,7 +2,6 @@ FROM debian:buster
 
 RUN apt-get -y update && apt-get install -y nginx openssl
 COPY conf/nginx.conf /etc/nginx/sites-available/default
-# COPY /home/vagrant/nginx/file.php /file.php
 
 ### chown is used to change the owner of the files in the container ###
 RUN mkdir -p /var/www/wordpress && chown -R www-data:www-data /var/www/wordpress

@@ -1,4 +1,12 @@
 ---
+
+- name: Create a volume with options
+  docker_volume:
+    name: wordpress
+    driver_options:
+      type: btrfs
+      device: /var/lib/data/wp
+
 - name: creat wordpress directory
   command: mkdir -p wordpress/conf
 
@@ -32,3 +40,7 @@
       - 9000:9000
     expose:
       - 9000
+    networks:
+      - name: cloud-network
+    volumes:
+      - wordpress:/var/www/wordpress:rw

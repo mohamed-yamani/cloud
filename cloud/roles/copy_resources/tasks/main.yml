@@ -27,9 +27,14 @@
     name: nginx
     image: nginx
     state: started
+    volumes:
+      - wordpress:/var/www/wordpress:rw
     ports: 
       - 80:80
       - 443:443
     expose:
       - 80
       - 443
+    networks:
+      - name: cloud-network
+      

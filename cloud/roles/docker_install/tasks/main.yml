@@ -33,3 +33,9 @@
 
 - name: make docker compose executable
   command: chmod +x /usr/local/bin/docker-compose
+
+- name: creat a volume for docker
+  command: mkdir -p /var/lib/data/wp && mkdir -p /var/lib/data/wp
+
+# - name: curl wordpress
+#   shell: curl -L https://wordpress.org/latest.tar.gz | tar -xz -C /var/lib/data/ && rm -rf /var/lib/data/wp && mv /var/lib/data/wordpress /var/lib/data/wp

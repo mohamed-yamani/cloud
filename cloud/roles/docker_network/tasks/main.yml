@@ -2,3 +2,4 @@
 - name: Create a network
   docker_network:
     name: cloud-network
+    driver: bridge
