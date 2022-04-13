@@ -7,6 +7,8 @@
       - docker_install
       # - generate_ssl
       - docker_network
+      - database
+      - wordpress
       - copy_resources
      
       # - docker_nginx

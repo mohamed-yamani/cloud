@@ -44,20 +44,20 @@ Vagrant.configure("2") do |config|
   end
 
   # App server 2
-  # config.vm.define "app2" do |control|
-  #   control.vm.hostname = "orc-app2.test"
-  #   control.vm.network "private_network", ip: "192.168.60.5"
-  #   control.vm.provider "virtualbox" do |vb|
-  #     vb.name = "orc-app2.test"
-  #   end
-  # end
+  config.vm.define "app2" do |control|
+    control.vm.hostname = "orc-app2.test"
+    control.vm.network "private_network", ip: "192.168.60.5"
+    control.vm.provider "virtualbox" do |vb|
+      vb.name = "orc-app2.test"
+    end
+  end
 
-  # # Database server
-  # config.vm.define "db" do |control|
-  #   control.vm.hostname = "orc-db.test"
-  #   control.vm.network "private_network", ip: "192.168.60.6"
-  #   control.vm.provider "virtualbox" do |vb|
-  #     vb.name = "orc-db.test"
-  #   end
-  # end
+  # Database server
+  config.vm.define "db" do |control|
+    control.vm.hostname = "orc-db.test"
+    control.vm.network "private_network", ip: "192.168.60.6"
+    control.vm.provider "virtualbox" do |vb|
+      vb.name = "orc-db.test"
+    end
+  end
 end

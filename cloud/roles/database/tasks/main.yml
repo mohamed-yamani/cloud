@@ -1,0 +1,34 @@
+---
+- name: creat database directory
+  command: mkdir -p database/conf
+
+- name: copy dockerfile
+  copy:
+    src: ./resources/database/Dockerfile
+    dest: ./database/
+
+- name: copy script config
+  copy:
+    src: ./resources/database/conf/script.sh
+    dest: ./database/conf
+
+# - name: copy wp-config
+#   copy:
+#     src: ./resources/wordpress/conf/wp-config.php
+#     dest: ./wordpress/conf
+
+
+- name: build database image
+  shell: |
+    while [ ! -f ./database/Dockerfile ]; do sleep 5; done && 
+      docker build -t database ./database
+
+- name: docker run wordpress
+  docker_container:
+    name: database
+    image: database
+    state: started
+    ports: 
+      - 3306:3306
+    expose:
+      - 3306
