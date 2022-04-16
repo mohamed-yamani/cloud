@@ -9,9 +9,9 @@
     - debug: var=hostvars[inventory_hostname]['inventory_hostname']
 
   roles:
-    - docker
-    - network
-    - mysql
-    - wordpress
-    - webserver   
-    - phpmyadmin
+    - { role: docker, tags: ['docker'] }
+    - { role: network, tags: ['network'] }
+    - { role: wordpress, tags: ['wordpress', 'allcontainers'] }
+    - { role: mysql, tags: ['mysql', 'allcontainers'] }
+    - { role: webserver, tags: ['webserver', 'allcontainers'] }   
+    - { role: phpmyadmin, tags: ['phpmyadmin', 'allcontainers'] }
