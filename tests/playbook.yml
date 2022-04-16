@@ -1,0 +1,245 @@
+---
+  - name: Apache
+    hosts: all
+    become: true
+
+    environment:
+      env_var: env_var
+    
+    vars:
+      apache_package: apache2
+      apache_service: apache2
+      apache_config_dir: /etc/apache2/sites-enabled
+
+    handlers:
+      - name: restart apache
+        service:
+          name: "{{ apache_service }}"
+          state: restarted
+
+    tasks:
+    - name: Add env var.
+      lineinfile:
+        dest: "~/.bashrc"
+        regexp: '^ENV_VAR='
+        line: 'ENV_VAR=value'
+      become: false
+
+    - name: Get env var.
+      become: false
+      shell: bash -ilc 'source ~/.bashrc'
+      register: foo
+
+    - debug: msg="the env_var is {{ foo.stdout }}"
+
+    - name: Update the repos cache.
+      apt:
+        update_cache: yes
+
+    - name: Install Apache.
+      apt:
+        name:
+          - "{{ apache_package }}"
+        state: present
+
+    - name: Check Apache Started and Configure it to run at Boot.
+      service:
+        name: "{{ apache_service }}"
+        state: started
+        enabled: true
+...
+
+
+
+
+# ---
+#   - name: Apache
+#     hosts: all
+#     become: true
+
+#     environment:
+#       env_var: env_var
+    
+#     vars:
+#       apache_package: apache2
+#       apache_service: apache2
+#       apache_config_dir: /etc/apache2/sites-enabled
+
+#     handlers:
+#       - name: restart apache
+#         service:
+#           name: "{{ apache_service }}"
+#           state: restarted
+
+#     tasks:
+#     - name: Add env var.
+#       lineinfile:
+#         dest: "~/.bashrc"
+#         regexp: '^ENV_VAR='
+#         line: 'ENV_VAR=value'
+#       become: false
+
+#     # - name: Get env var.
+#     #   shell: 'bash -ilc source ~/.bashrc && echo $ENV_VAR'
+#     #   register: foo
+
+#     - name: Get env var.
+#       shell: bash -ilc 'source ~/.bashrc'
+#       register: foo
+
+#     - name: source user profile file
+#       #become: yes
+#       #become_user: my_user  # in case you want to become different user (make sure acl package is installed)
+#       shell: bash -ilc 'which python' # example command which prints
+#       register: which_python
+#     # - debug:
+#     #   var: which_python
+
+#     # - debug: msg="the env_var is {{ foo.stdout }}"
+
+#     - name: Update the repos cache.
+#       apt:
+#         update_cache: yes
+
+#     - name: Install Apache.
+#       apt:
+#         name:
+#           - "{{ apache_package }}"
+#         state: present
+
+#     - name: Check Apache Started and Configure it to run at Boot.
+#       service:
+#         name: "{{ apache_service }}"
+#         state: started
+#         enabled: true
+# ...
+
+
+
+# ---
+#   - name: Apache.
+#   - hosts: all
+
+#   - tasks:
+#     - name: Install Apache.
+#       command: apt-get install --quiet -y http httpd-devel
+#     - name: Copy Configuration Files.
+#       command: >
+#         cp httpd.conf /etc/httpd/conf/httpd-vhost.conf
+#     - command: >
+#         cp httpd-vhosts /etc/httpd/conf/httpd-vhost.conf
+#     - name: Start Apache and Configure it to run at boot.
+#       command: service httpd start
+#     - command: chkconfig httpd on
+# ...
+
+
+# ---
+#   - name: Apache
+#     hosts: all
+#     become: true
+
+#     environment:
+#       env_var: env_var
+    
+#     vars:
+#       apache_package: apache2
+#       apache_service: apache2
+#       apache_config_dir: /etc/apache2/sites-enabled
+
+#     handlers:
+#       - name: restart apache
+#         service:
+#           name: "{{ apache_service }}"
+#           state: restarted
+
+#     tasks:
+#     - name: Add env var.
+#       lineinfile:
+#         dest: "~/.bashrc"
+#         regexp: '^ENV_VAR='
+#         line: 'ENV_VAR=value'
+#       become: false
+
+#     - name: Get env var.
+#       shell: 'source ~/.zshrc && echo $ENV_VAR'
+#       register: foo
+
+#     - debug: msg="the env_var is {{ foo.stdout }}"
+
+#     - name: Download a Files...
+#       get_url:
+#         url: https://google.come/file
+#         dest: /tmp
+
+#     - name: Update the repos cache.
+#       apt:
+#         update_cache: yes
+
+#     - name: Install Apache.
+#       apt:
+#         name:
+#           - "{{ apache_package }}"
+#         state: present
+
+#     - name: Copy Configuration Files...
+#       copy:
+#         src: "{{ item.src }}"
+#         dest: "{{ item.dest }}"
+#         owner: root
+#         group: root
+#         mode: 0644
+#       with_items:
+#         - src: config/apache2.conf 
+#           dest: "{{ apache_config_dir }}/httpd-vhost.conf"
+#         - src: config/apache-vhosts
+#           dest: "{{ apache_config_dir }}/apache-vhost.conf"
+#       notify: restart apache
+
+#     - name: Check Apache Started and Configure it to run at Boot.
+#       service:
+#         name: "{{ apache_service }}"
+#         state: started
+#         enabled: true
+# ...
+
+
+
+
+
+# ---
+#   - name: Apache.
+#   - hosts: all
+
+#   - tasks:
+#     - name: Install Apache.
+#       command: apt-get install --quiet -y http httpd-devel
+#     - name: Copy Configuration Files.
+#       command: >
+#         cp httpd.conf /etc/httpd/conf/httpd-vhost.conf
+#     - command: >
+#         cp httpd-vhosts /etc/httpd/conf/httpd-vhost.conf
+#     - name: Start Apache and Configure it to run at boot.
+#       command: service httpd start
+#     - command: chkconfig httpd on
+# ...
+
+
+
+# ---
+#   - name: Apache
+#   - hosts: all
+
+#   - tasks:
+#     - name: Install Apache.
+#       shell: |
+#         apt-get install --quiet -y http httpd-devel
+#         cp httpd.conf /etc/httpd/conf/httpd-vhost.conf
+#         cp httpd-vhosts /etc/httpd/conf/httpd-vhost.conf
+#     - name: Start Apache and Configure it to run at boot.
+#       command: service httpd start
+#     - command: chkconfig httpd on
+# ...
+
+
+

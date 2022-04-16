@@ -1,0 +1,43 @@
+---
+- name: Create Build Directory
+  file:
+    path: /home/{{ user }}/mysql
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+
+- name: Copy Dockerfile
+  copy:
+    src: ../files/Dockerfile
+    dest: mysql/Dockerfile
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+
+- name: Create Mysql Image
+  community.docker.docker_image:
+    name: mysql
+    source: build
+    build:
+      pull: no
+      path: "/home/{{ user }}/mysql"
+    state: present
+
+- name: Run Mysql Container
+  community.docker.docker_container:
+    name: mysql
+    restart: yes
+    restart_policy: always
+    image: mysql
+    networks:
+      - name: "{{ network_name }}"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ MYSQL_ROOT_PASSWORD }}"
+      MYSQL_DATABASE: "{{ MYSQL_DATABASE }}"
+      MYSQL_USER: "{{ MYSQL_USER }}"
+      MYSQL_PASSWORD: "{{ MYSQL_PASSWORD }}"
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - "{{ db_volume }}:/var/lib/mysql:rw"
+    state: started

@@ -1,0 +1,28 @@
+# User
+user: vagrant
+
+# Mysql vars
+MYSQL_ROOT_PASSWORD: root1337 
+MYSQL_DATABASE: wordpress
+MYSQL_USER: wp
+MYSQL_PASSWORD: wp1337
+
+# Wordpress vars
+WORDPRESS_DB_HOST: mysql:3306
+WORDPRESS_DB_NAME: wordpress
+WORDPRESS_DB_USER: wp
+WORDPRESS_DB_PASSWORD: wp1337
+
+# Phpmyadmin vars
+PMA_HOST: mysql
+PMA_PORT: '3306'
+PMA_USER: wp
+PMA_PASSWORD: wp1337
+PMA_ABSOLUTE_URI: "https://{{ PMA_ABSOLUTE_URI }}/phpmyadmin"
+
+# Volumes
+db_volume: /home/{{ user }}/data/db
+wp_volume: /home/{{ user }}/data/wp
+
+# Network
+network_name: cloud_network

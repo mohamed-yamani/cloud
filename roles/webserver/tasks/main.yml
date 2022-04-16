@@ -1,0 +1,49 @@
+---
+
+- name: Create Build Directory
+  file:
+    path: /home/{{ user }}/nginx
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+
+- name: Copy Dockerfile
+  copy:
+    src: ../files/Dockerfile
+    dest: nginx/Dockerfile
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+
+- name: Copy Config Files...
+  copy:
+    src: files/nginx.conf
+    dest: /home/{{ user }}/nginx
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0644'
+
+- name: Create Nginx Image
+  community.docker.docker_image:
+    name: nginx
+    source: build
+    build:
+      pull: no
+      path: "/home/{{ user }}/nginx/"
+    state: present
+
+- name: Run Nginx Container
+  community.docker.docker_container:
+    name: nginx
+    restart: yes
+    restart_policy: always
+    image: nginx
+    networks:
+      - name: "{{ network_name }}"
+    volumes:
+      "{{ wp_volume }}:/var/www/html:rw"
+    ports:
+      - '80:80'
+      - '443:443'
+    state: started

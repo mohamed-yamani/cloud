@@ -1,0 +1,48 @@
+---
+- name: Create Build Directory
+  file:
+    path: /home/{{ user }}/phpmyadmin
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+
+- name: Copy Dockerfile
+  copy:
+    src: ../files/Dockerfile
+    dest: phpmyadmin/Dockerfile
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+
+- name: Create PHPmyadmin Image
+  community.docker.docker_image:
+    name: phpmyadmin
+    source: build
+    build:
+      pull: no
+      path: "/home/{{ user }}/phpmyadmin"
+    state: present
+
+- name: Run PhpMyAdmin Container
+  community.docker.docker_container:
+    name: phpmyadmin
+    restart: yes
+    restart_policy: always
+    image: phpmyadmin
+    networks:
+      - name: "{{ network_name }}"
+    env:
+      PMA_HOST: "{{ PMA_HOST }}"
+      PMA_PORT: "{{ PMA_PORT }}"
+      MYSQL_ROOT_PASSWORD: "{{ MYSQL_ROOT_PASSWORD }}"
+      PMA_USER: "{{ PMA_USER }}"
+      PMA_PASSWORD: "{{ PMA_PASSWORD }}"
+      PMA_ABSOLUTE_URI: "https://192.168.42.100/phpmyadmin"
+    ports:
+      - '80:80'
+    # ports:
+    #   - '8888:80'
+    state: started
+  
+    

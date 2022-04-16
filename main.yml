@@ -1,0 +1,17 @@
+---
+- name: wordpress
+  hosts: all
+  become: true
+
+  vars_files:
+    - "vars/main.yml"
+  tasks:
+    - debug: var=hostvars[inventory_hostname]['inventory_hostname']
+
+  roles:
+    - docker
+    - network
+    - mysql
+    - wordpress
+    - webserver
+    - phpmyadmin

@@ -1,0 +1,59 @@
+---
+- name: Copy Wordpress Data
+  copy:
+    src: ../files/wp_data.zip
+    dest: /home/{{ user }}/
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+
+- name: Unzip Wordpress Data
+  unarchive:
+    src: /home/{{ user }}/wp_data.zip
+    dest: /home/{{ user }}/
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+    remote_src: yes
+
+- name: Create Build Directory
+  file:
+    path: /home/{{ user }}/wordpress
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+
+- name: Copy Dockerfile
+  copy:
+    src: ../files/Dockerfile
+    dest: wordpress/Dockerfile
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+
+- name: Create Wordpress PHP Image
+  community.docker.docker_image:
+    name: wordpress
+    source: build
+    build:
+      pull: no
+      path: "/home/{{ user }}/wordpress"
+    state: present
+
+- name: Run Wordpress Container
+  community.docker.docker_container:
+    name: wordpress
+    restart: yes
+    restart_policy: always
+    image: wordpress:5.9.3-fpm-alpine
+    networks:
+      - name: "{{ network_name }}"
+    env:
+      WORDPRESS_DB_HOST: "{{ WORDPRESS_DB_HOST }}"
+      WORDPRESS_DB_USER: "{{ WORDPRESS_DB_USER }}"
+      WORDPRESS_DB_PASSWORD: "{{ WORDPRESS_DB_PASSWORD }}"
+      WORDPRESS_DB_NAME: "{{ WORDPRESS_DB_NAME }}"
+    volumes:
+      "{{ wp_volume }}:/var/www/html:rw"
+    state: started

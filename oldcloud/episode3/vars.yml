@@ -1,5 +1,0 @@
-download_dir: /tmp
-solr_dir: /opt/solr
-solr_version: "8.5.0"
-solr_checksum: sha512
-
