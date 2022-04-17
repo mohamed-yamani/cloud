@@ -38,6 +38,7 @@
       MYSQL_ROOT_PASSWORD: "{{ MYSQL_ROOT_PASSWORD }}"
       PMA_USER: "{{ PMA_USER }}"
       PMA_PASSWORD: "{{ PMA_PASSWORD }}"
+      PMA_ABSOLUTE_URI: https://phpmyadmin/
     ports:
       - '8888:80'
     state: started
